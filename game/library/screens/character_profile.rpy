@@ -859,57 +859,34 @@ screen girl_control():
                 else:
                     add cd_unchecked align (1.0, 0.5)
             # ------------------------------------------------------------------------------------------------------------------------------------->>>        
-               
-            # Disabled until Beta release        
-            # if char.action in ["Whore", "ServiceGirl", "Stripper"]:
-                # null height 10
-                # hbox:
-                    # spacing 20
-                    # if char.autocontrol['SlaveDriver']:
-                        # textbutton "{color=[red]}Slave Driver":
-                            # yalign 0.5
-                            # action Return(['girl_cntr', 'slavedriver'])
-                            # minimum(150, 20)
-                            # maximum(150, 20)
-                            # xfill true
-                        # add cb_checked yalign 0.5
-                    # elif not char.autocontrol['SlaveDriver']:
-                        # textbutton "Slave Driver":
-                            # yalign 0.5
-                            # action Return(['girl_cntr', 'slavedriver'])
-                            # minimum(150, 20)
-                            # maximum(150, 20)
-                            # xfill true
-                        # add cd_unchecked yalign 0.5
+            null height 10
+            if not isinstance(char, PytGroup) and char.status !="slave" and any(trait in char.traits for trait in ["Prostitute", "Stripper"]):
+                button:
+                    xysize (200, 32)
+                    action If(char.disposition > 850, true=ToggleField(char, "master"))
+                    if char.gender == "Female":
+                        text "Dominatrix" align (0.0, 0.5)
+                    else:
+                        text "Master" align (0.0, 0.5)
+                    if isinstance(char.master, list):
+                        add cb_some_checked align (1.0, 0.5)
+                    elif char.master:
+                        add cb_checked align (1.0, 0.5)
+                    else:
+                        add cd_unchecked align (1.0, 0.5)
 
-            null height 30
-            
-            # if char.action == "Whore":
-                # for key in char.autocontrol['Acts']:
-                    # null height 10
-                    # hbox:
-                        # spacing 20
-                        # textbutton [key.capitalize()]:
-                            # yalign 0.5
-                            # action Return(['girl_cntr', 'set_act', key])
-                            # minimum(150, 20)
-                        # if char.autocontrol['Acts'][key]:
-                            # add cb_checked yalign 0.5
-                        # elif not char.autocontrol['Acts'][key]:
-                            # add cd_unchecked yalign 0.5
-            
-            if char.action == "ServiceGirl":
-                for key in char.autocontrol['S_Tasks']:
-                    $ devlog.warn("key:"+key)
+            null height 10
+            if all("Prostitute" in c.traits for c  in char.lst) if isinstance(char, PytGroup) else "Prostitute" in char.traits:
+                for act in char.sex_acts:
                     button:
-                        action ToggleDict(char.autocontrol['S_Tasks'], key)
-                        xysize (200, 30)
-                        text (key.capitalize()) align (0.0, 0.5)
-                        if isinstance(char.autocontrol['S_Tasks'][key], list):
+                        xysize (200, 32)
+                        action ToggleDict(char.sex_acts, act)
+                        text act align (0.0, 0.5)
+                        if isinstance(char.sex_acts[act], list):
                             add cb_some_checked align (1.0, 0.5)
-                        elif char.autocontrol['S_Tasks'][key]:
+                        elif char.sex_acts[act]:
                             add cb_checked align (1.0, 0.5)
-                        elif not char.autocontrol['S_Tasks'][key]:
+                        else:
                             add cd_unchecked align (1.0, 0.5)
         
         button:

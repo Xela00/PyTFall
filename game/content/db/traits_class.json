@@ -388,6 +388,74 @@
         }
     },
     {
+        "id": "Dominatrix",
+        "occupations": [
+            "Dominatrix"
+        ],
+        "desc": "She plays an dominating role in sex acts.",
+        "basetrait": true,
+        "mod": {
+            "character": 60,
+            "strength": 15
+        },
+        "max": {
+            "character": 60,
+            "strength": 15
+        },
+        "mod_skills": {
+            "vaginal": [
+                0.01,
+                0.01,
+                0.01
+            ],
+            "sex": [
+                0.1,
+                0.1,
+                0.1
+            ],
+            "group": [
+                0.02,
+                0.02,
+                0.02
+            ],
+            "bdsm": [
+                0.08,
+                0.08,
+                0.08
+            ]
+        },
+        "init_lvlmax": {
+            "character": 50,
+            "strength": 15
+        },
+        "init_max": {
+            "character": 25
+        },
+        "init_mod": {
+            "character": 15
+        },
+        "init_skills": {
+            "bdsm": [
+                20,
+                60
+            ],
+            "attack": [
+                2,
+                2
+            ],
+            "sex": [
+                2,
+                10
+            ]
+        },
+        "leveling_stats": {
+            "character": [
+                0,
+                1
+            ]
+        }
+    },
+    {
         "id": "Mage",
         "occupations": [
             "Warrior", "Caster"

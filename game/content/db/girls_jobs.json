@@ -2,5 +2,5 @@
 {"Warrior": {"City Guard": ["constitution", 1.5], "Thug": ["luck", 2], "Adventurous": ["intelligence", 3.5], "Gladiator": ["refinement", 3],  "Bodyguard": ["defence", 4], "Baywatcher": ["charisma", 1], "Assassin": ["agility", 5], "Mercenary": ["character", 2.5]}},
 {"Stripper": {"Dancer": ["refinement", 2], "Thief": ["luck", 2.5], "Escort": ["character", 3], "Model": ["charisma", 4], "Stripper": ["strip", 5], "Equilibrist": ["agility", 4.5], "Cheerleader": ["constitution", 1], "Event Dancer": ["service", 3.5]}},
 {"ServiceGirl": {"Maid": ["refinement", 4], "Extortionist": ["luck", 2.5], "Gardener": ["constitution", 3], "Cleaner": ["service", 2], "Waitress": ["charisma", 3.5], "Receptionist": ["intelligence", 5], "Peddler": ["agility", 1]}},
-{"Prostitute": {"Sex Escort": ["refinement", 5], "Street Whore": ["blowjob", 1], "Dominatrix": ["character", 4], "Party Girl": ["charisma", 3], "Sex Pet": ["service", 2], "Call-girl": ["anal", 1.5]}}
+{"Prostitute": {"Sex Escort": ["refinement", 5], "Street Whore": ["oral", 1], "Dominatrix": ["character", 4], "Party Girl": ["charisma", 3], "Sex Pet": ["service", 2], "Call-girl": ["anal", 1.5]}}
 ]

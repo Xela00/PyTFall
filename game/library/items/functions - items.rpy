@@ -89,7 +89,7 @@ init -11 python:
                 girl.equip_for("Service")
             elif jobtype == "Stripper":
                 girl.equip_for("Striptease")
-            elif jobtype == "Whore":
+            elif jobtype == "Prostitute":
                 girl.equip_for("Sex")
                 
     def transfer_items(source, target, item, amount=1, silent=False, force=False):

@@ -204,7 +204,7 @@ init -8 python:
             remedy = {
                 ".eqslots{}": self._ordered_on_abundance, ".equip_for()": self._list_for_caller,
                 ".status": "various", ".action": "various", ".location": "various",
-                ".autobuy": [], ".front_row": [], ".autoequip": [], ".autocontrol{}": [],
+                ".autobuy": [], ".front_row": [], ".autoequip": [], ".autocontrol{}": [], ".sex_acts{}": [],
                 "flatten": [".traits", ".attack_skills", ".magic_skills"]
             }
             super(PytGroup, self).__init__(l=chars, remedy=remedy, at="")

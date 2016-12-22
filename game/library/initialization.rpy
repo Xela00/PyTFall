@@ -75,7 +75,9 @@ init -999 python:
                 else:
                     found = [i for i in range(0, len(self._log)) if self._log[i][0] == msg]
                     if found:
-                        renpy.error("timing of %s wasn't last on the stack, later timings were:\n%s"%(msg, str(logs[found[0]:])))
+                        devlog.warn("timing of %s wasn't last on the stack, later timings were:\n%s"%(msg, str(self._log[found[0]:])))
+                        (old_msg, timed) = self._log.pop(found[0])
+                        devlog.info("%s took %s secs to run!"%(old_msg, time.time() - timed))
 
                 self._log.append((msg, time.time()))
                 devlog.info("Starting timer: %s"%msg)

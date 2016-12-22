@@ -778,7 +778,7 @@
                                                           'And so he took her in her butt. \n']))
                 
             # Various job acts   
-            elif self.client.act == 'blowjob':
+            elif self.client.act == 'oral':
                 kwargs = dict(exclude=["rape", "angry", "in pain", "dungeon", "sad", "gay", "restrained"], resize=size, type="reduce", add_mood=False)
                 self.txt.append(choice(["%s hired her for some side job on his thing. " % self.client.name, "%s is paying her today for naughty service. " % self.client.name]))
                 # here we will have to choose skills depending on selected act

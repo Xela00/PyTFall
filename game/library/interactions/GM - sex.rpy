@@ -745,7 +745,7 @@ label interactions_sex_scene_logic_part: # here we resolve all logic for changin
         if (male_skill_for_checking - skill_for_checking) > 250 and dice(75):
             $ char.strip += 1
     elif current_action == "blow":
-        $ get_single_sex_picture(char, act="blowjob", location=sex_scene_location, hidden_partner=True)
+        $ get_single_sex_picture(char, act="oral", location=sex_scene_location, hidden_partner=True)
         $ image_tags = gm.img.get_image_tags()
         if ct("Lesbian"):
             $ skill_for_checking = round(char.get_skill("oral")*0.65 + char.get_skill("sex")*0.1)

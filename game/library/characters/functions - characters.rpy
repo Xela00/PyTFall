@@ -155,7 +155,7 @@ init -11 python:
         id: id to choose from the rchars dictionary that holds rGirl loading data from JSON files, will be chosen at random if none availible.
         name: (String) Name for a girl to use. If None one will be chosen from randomNames file!
         last_name: Same thing only for last name :)
-        pattern: Pattern to use when creating the character! (Options atm: Warrior, ServiceGirl, Prostitute, Stripper) If None, we use data or normalize in init()
+        pattern: Pattern to use when creating the character! (Options atm: Warrior, ServiceGirl, Prostitute, Stripper, Manager) If None, we use data or normalize in init()
         level: Level of the character...
         add_to_gameworld: Adds to characters dictionary, should always be True unless character is created not to participate in the game world...
         '''
@@ -396,6 +396,8 @@ init -11 python:
             _traits.append(traits["Stripper"])
         elif pattern == "Manager":
             _traits.append(traits["Manager"])
+        elif pattern == "Dominatrix":
+            _traits.append(traits["Dominatrix"])
         else:
             raise Exception("Cannot create base traits list from pattern: {}".format(pattern))
             

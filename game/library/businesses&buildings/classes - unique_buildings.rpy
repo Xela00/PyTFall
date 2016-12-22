@@ -225,7 +225,7 @@ init -9 python:
         The building that represents Business Buildings.
         """
         
-        ACTIONS = ['Whore', 'ServiceGirl', 'Rest', 'Stripper', 'Guard']
+        ACTIONS = ['Prostitute', 'ServiceGirl', 'Rest', 'Stripper', 'Guard']
         
         def __init__(self, *args, **kwargs):
             """
