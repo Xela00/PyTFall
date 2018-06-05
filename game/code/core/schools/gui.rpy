@@ -6,7 +6,10 @@ label school_training:
         $ result = ui.interact()
 
         if result[0] == "set_course":
-            pass
+            # add_student ? 
+            $ result[1].add_student(char) #I think this is the right thing to pass to add_student
+            # I guess just jump back after setting the course? 
+            jump return_from_school_training
 
         if result == ["control", "return"]:
             jump return_from_school_training
@@ -86,7 +89,7 @@ screen school_training():
                     margin 2, 2
                     padding 5, 5
                     xysize 180, 350
-                    action NullAction()
+                    action Return(['set_course', course])#NullAction() #this should be replaced with something to select the school?
                     tooltip course.tooltip
                     vbox:
                         xalign .5

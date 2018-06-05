@@ -604,7 +604,7 @@ init -9 python:
 
                 girl.action = None
 
-                if schools[TrainingDungeon.NAME] in hero.buildings:
+                if False: #schools[TrainingDungeon.NAME] in hero.buildings:
                     girl.location = schools[TrainingDungeon.NAME]
                 else:
                     girl.location = hero

@@ -109,7 +109,7 @@ init -9 python:
                     self.worker = None
 
                 if set_location:
-                    if schools[TrainingDungeon.NAME] in hero.buildings:
+                    if False: #schools[TrainingDungeon.NAME] in hero.buildings:
                         char.location = schools[TrainingDungeon.NAME]
                         char.home = schools[TrainingDungeon.NAME]
                     else:
