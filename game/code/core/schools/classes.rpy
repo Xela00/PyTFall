@@ -144,17 +144,42 @@ init python:
                 #ss = primary + secon
 
                 if char == best_student:
-                    pass
+                    #give them an extra ap? Advantage of simplicity.
+                    ap_spent +=1
 
                 # Add stats/skills/exp mods.
                 stat_pool = 1*ap_spent # Adjusts to difficulty (teacher tier)
                 skills_pool = 2*ap_spent  # Adjusts to difficulty (teacher tier)
-                #TODO: 
-                #1) charge hero for course? 
-                #2) Improve stats of girl
-                #3) add skills from class
                 
-
+                #haven't taken into account Traits.
+                
+                #1) charge hero for course? 
+                hero.take_money(self.price, reason=self.name)
+                
+                #2 add exp
+                #sum of stat and skills pools will usually be 9 (3ap), giving 225 to 405 xp. Might need to be adjusted.
+                char.add_exp(randint(25,45) * (stat_pool + skills_pool)) 
+                    
+                #) Improve stats of girl
+                while(stat_pool > 0):
+                    #randomly distribute stat_pool points among primary and secondary stats. 
+                    #Can be replaced with something more sophistocated if desired.
+                    if dice(50):
+                        char.mod_stat(choice(primary_stats), 1)
+                    else:
+                        char.mod_stat(choice(secondary_stats), 1)
+                    stat_pool -=1
+                
+                #) improve skills from class
+                while(skills_pool > 0):
+                    if dice(50):
+                        char.mod_skill(choice(primary_skills), 1)
+                    else:
+                        char.mod_skill(choice(secondary_skills), 1)
+                    skills_pool -=1
+                    
+                
+                
                 char.AP = 0
 
 
@@ -164,8 +189,12 @@ init python:
             super(School, self).__init__(id=id, name=id)
             self.img = renpy.displayable(img)
             self.courses = []
-            self.is_school = True #added so that checks to building objects in character/screens works right
 
+        @property
+        def is_school(self):
+            #added so that checks to building objects in character/screens works right
+            return True
+            
         def add_cources(self):
             forced = max(0, 12-len(self.courses))
             for i in range(forced):
