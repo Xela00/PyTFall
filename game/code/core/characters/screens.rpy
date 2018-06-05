@@ -36,7 +36,7 @@ screen set_action_dropdown(char, pos=()):
         anchor (xval, yval)
         has vbox
 
-        if getattr(char.location, "is_school", False):
+        if getattr(char.workplace, "is_school", False): #char.workplace should have the building ref, to be consistent with elif below
             textbutton "Change Course":
                 action [Hide("set_action_dropdown"),
                         Hide("charslist"),

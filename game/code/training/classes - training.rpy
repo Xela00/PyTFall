@@ -4,6 +4,7 @@ init -9 python:
         Checks whether a girl is currently in a location that offers training.
         girl = The girl to check.
         """
+        # girl.location while training should be the school building?
         return girl.location in schools or girl.location in schools.values()
 
 

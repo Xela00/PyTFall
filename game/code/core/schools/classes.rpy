@@ -13,6 +13,8 @@ init python:
             self.effectiveness = effectiveness
 
             self.data = data
+            
+            self.building = None #so we know what building the course is associated with.
 
             self.set_image()
             self.set_price()
@@ -73,7 +75,19 @@ init python:
             return tt
 
         def add_student(self, student):
+            #Added this check to make sure the student isn't already in the class.
+            #Should probably also check to make sure the student isn't in other classes?
+            if student in self.students:
+                return
+                
             self.students.append(student)
+            #Should probably also update their Workplace, and Action character fields
+            #Workplace seems to be a building, so added .building to course obj and set to building obj
+            student.workplace = self.building
+            
+            #student.location = 'is_school' #put them at the school location?
+            
+            
             if student not in self.students_progress:
                 self.students_progress[student] = 0
 
@@ -143,6 +157,7 @@ init python:
             super(School, self).__init__(id=id, name=id)
             self.img = renpy.displayable(img)
             self.courses = []
+            self.is_school = True #added so that checks to building objects in character/screens works right
 
         def add_cources(self):
             forced = max(0, 12-len(self.courses))
@@ -170,7 +185,9 @@ init python:
             course = SchoolCourse(id, difficulty, duration,
                                   days_to_complete, effectiveness,
                                   data)
+            course.building = self # ref so that each course knows what building it is in.
             self.courses.append(course)
+            
 
         def next_day(self):
             for c in self.courses[:]:
