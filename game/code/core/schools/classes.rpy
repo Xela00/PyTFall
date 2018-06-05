@@ -85,7 +85,8 @@ init python:
             #Workplace seems to be a building, so added .building to course obj and set to building obj
             student.workplace = self.building
             
-            #student.location = 'is_school' #put them at the school location?
+            #This currently permits a student to be in multiple classes. 
+            #I suppose that's technically ok, because they won't have the AP for all of them...
             
             
             if student not in self.students_progress:
@@ -117,7 +118,8 @@ init python:
                 primary_skills = []
                 secondary_skills = []
 
-                for s in self.data.primary:
+                for s in self.data['primary']: #this isn't being set correctly and crashing on Next Day call.
+                    #self.data is a dict, so needs this accessor
                     if char.stats.is_stat(s):
                         if getattr(char, s) < char.get_max(s):
                             secondary_stats.append(s)
@@ -127,7 +129,7 @@ init python:
                         raise Exception("{} is not a valid stat/skill for {} course.".format(
                                 s, self.name
                         ))
-                for s in self.data.secondary:
+                for s in self.data['secondary']:
                     if char.stats.is_stat(s):
                         if getattr(char, s) < char.get_max(s):
                             secondary_stats.append(s)
@@ -137,9 +139,9 @@ init python:
                         raise Exception("{} is not a valid stat/skill for {} course.".format(
                                 s, self.name
                         ))
-                secondary = self.data.secondary
-                ss = primary + secon
-
+                #can't tell what these lines are trying to do, but commented out as currently do nothing.
+                #secondary = self.data.secondary 
+                #ss = primary + secon
 
                 if char == best_student:
                     pass
@@ -147,6 +149,11 @@ init python:
                 # Add stats/skills/exp mods.
                 stat_pool = 1*ap_spent # Adjusts to difficulty (teacher tier)
                 skills_pool = 2*ap_spent  # Adjusts to difficulty (teacher tier)
+                #TODO: 
+                #1) charge hero for course? 
+                #2) Improve stats of girl
+                #3) add skills from class
+                
 
                 char.AP = 0
 
