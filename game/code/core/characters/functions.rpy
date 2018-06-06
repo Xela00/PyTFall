@@ -7,6 +7,21 @@ init -11 python:
         #since there is no slave training yet, this is always false.
         #Should be updated when Slave Training is implemented.
         return False
+        
+    def char_remove_student(char):
+        #sanity check that char has a workplace
+        if not char.workplace:
+            return
+        else:
+            char.workplace.remove_student(char)
+            
+    def char_is_student(char):
+        if not char.workplace: #if there's no workplace, can't be a student
+            return False
+        if char.workplace in schools:
+            return True
+        
+        return False
     
     def get_average_wage():
         wages = Tier.BASE_WAGES.values()
