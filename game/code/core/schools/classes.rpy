@@ -112,17 +112,17 @@ init python:
                 days_to_complete = self.days_to_complete # Mod on traits?
                 ap_spent = char.AP
 
-                primary_stats = []
+                primary_stats = [] #These should be a list of string skills/stats (e.g. 'attack', 'management', 'intelligence', etc)
                 secondary_stats = []
 
                 primary_skills = []
                 secondary_skills = []
 
-                for s in self.data['primary']: #this isn't being set correctly and crashing on Next Day call.
-                    #self.data is a dict, so needs this accessor
+                for s in self.data['primary']: #this was crashing on Next Day call.
+                    #self.data is a dict
                     if char.stats.is_stat(s):
                         if getattr(char, s) < char.get_max(s):
-                            secondary_stats.append(s)
+                            primary_stats.append(s) #shouldn't this be Primary stats?
                     elif char.stats.is_skill(s):
                         primary_skills.append(s)
                     else:
@@ -164,18 +164,23 @@ init python:
                 while(stat_pool > 0):
                     #randomly distribute stat_pool points among primary and secondary stats. 
                     #Can be replaced with something more sophistocated if desired.
-                    if dice(50):
+                    if dice(50) and len(primary_stats) > 0: #make sure the stats list isn't empty
                         char.mod_stat(choice(primary_stats), 1)
-                    else:
+                    elif len(secondary_stats) > 0:
                         char.mod_stat(choice(secondary_stats), 1)
+                    else: 
+                        #the girl misses out, I guess. Might want to add a stat here?
+                        pass
                     stat_pool -=1
                 
                 #) improve skills from class
                 while(skills_pool > 0):
-                    if dice(50):
+                    if dice(50) and len(primary_skills) > 0: #make sure the skills list isn't empty
                         char.mod_skill(choice(primary_skills), 1)
-                    else:
+                    elif len(primary_skills) > 0:
                         char.mod_skill(choice(secondary_skills), 1)
+                    else:
+                        pass
                     skills_pool -=1
                     
                 
@@ -195,7 +200,7 @@ init python:
             #added so that checks to building objects in character/screens works right
             return True
             
-        def add_cources(self):
+        def add_courses(self):
             forced = max(0, 12-len(self.courses))
             for i in range(forced):
                 self.create_course()
@@ -231,4 +236,4 @@ init python:
                 if c.days_remaining <= 0:
                     self.courses.remove(c)
 
-            self.add_courses()
+            self.add_courses() 
