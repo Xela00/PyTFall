@@ -180,9 +180,9 @@ label start:
     $ tl.start("Loading: Schools")
     $ schools = {}
     python hide: # Training/Schools/Weird Proxies by Thewlis:
-        school = School()
-        school.add_cources()
-        schools[school.name] = school
+        school = School() #updated for new School class 6/3/2018.
+        school.add_courses()
+        schools[school.id] = school # new School class has id not name.
         # schools = load_schools()
         # pytFlagProxyStore = shallowcopy(pytFlagProxyStore)
     $ tl.end("Loading: Schools")
@@ -293,6 +293,7 @@ label dev_testing_menu_and_load_mc:
             hero.say = Character(hero.nickname, color=ivory, show_two_window=True, show_side_image=hero.show("portrait", resize=(120, 120)))
             hero.restore_ap()
             hero.log_stats()
+            hero.gold = 999999999
 
             if DEBUG and not hero.home:
                 ap = buildings["Lux Apartment"]
@@ -400,8 +401,8 @@ label after_load:
                 building.flags = dict()
 
     python hide:
-        pytfall.economy.property_tax = {"slaves": .01,
-                                        "real_estate": .015}
+        pytfall.economy.property_tax = {"slaves": .001,
+                                        "real_estate": .0015}
 
     python:
         if hasattr(store, "dummy"):

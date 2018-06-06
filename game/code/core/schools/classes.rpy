@@ -13,6 +13,8 @@ init python:
             self.effectiveness = effectiveness
 
             self.data = data
+            
+            self.building = None #so we know what building the course is associated with.
 
             self.set_image()
             self.set_price()
@@ -73,12 +75,26 @@ init python:
             return tt
 
         def add_student(self, student):
+            #Added this check to make sure the student isn't already in the class.
+            #Should probably also check to make sure the student isn't in other classes?
+            if student in self.students:
+                return
+                
             self.students.append(student)
+            #Should probably also update their Workplace, and Action character fields
+            #Workplace seems to be a building, so added .building to course obj and set to building obj
+            student.workplace = self.building
+            
+            #This currently permits a student to be in multiple classes. 
+            #I suppose that's technically ok, because they won't have the AP for all of them...
+            
+            
             if student not in self.students_progress:
                 self.students_progress[student] = 0
 
-        def remove_student(self):
-            self.students.remove(student)
+        def remove_student(self, student):
+            if student in self.students:
+                self.students.remove(student)
 
         def next_day(self):
             self.days_remaining -= 1
@@ -97,23 +113,24 @@ init python:
                 days_to_complete = self.days_to_complete # Mod on traits?
                 ap_spent = char.AP
 
-                primary_stats = []
+                primary_stats = [] #These should be a list of string skills/stats (e.g. 'attack', 'management', 'intelligence', etc)
                 secondary_stats = []
 
                 primary_skills = []
                 secondary_skills = []
 
-                for s in self.data.primary:
+                for s in self.data['primary']: #this was crashing on Next Day call.
+                    #self.data is a dict
                     if char.stats.is_stat(s):
                         if getattr(char, s) < char.get_max(s):
-                            secondary_stats.append(s)
+                            primary_stats.append(s) #shouldn't this be Primary stats?
                     elif char.stats.is_skill(s):
                         primary_skills.append(s)
                     else:
                         raise Exception("{} is not a valid stat/skill for {} course.".format(
                                 s, self.name
                         ))
-                for s in self.data.secondary:
+                for s in self.data['secondary']:
                     if char.stats.is_stat(s):
                         if getattr(char, s) < char.get_max(s):
                             secondary_stats.append(s)
@@ -123,17 +140,52 @@ init python:
                         raise Exception("{} is not a valid stat/skill for {} course.".format(
                                 s, self.name
                         ))
-                secondary = self.data.secondary
-                ss = primary + secon
-
+                #can't tell what these lines are trying to do, but commented out as currently do nothing.
+                #secondary = self.data.secondary 
+                #ss = primary + secon
 
                 if char == best_student:
-                    pass
+                    #give them an extra ap? Advantage of simplicity.
+                    ap_spent +=1
 
                 # Add stats/skills/exp mods.
                 stat_pool = 1*ap_spent # Adjusts to difficulty (teacher tier)
                 skills_pool = 2*ap_spent  # Adjusts to difficulty (teacher tier)
-
+                
+                #haven't taken into account Traits.
+                
+                #1) charge hero for course? 
+                hero.take_money(self.price, reason=self.name)
+                
+                #2 add exp
+                #sum of stat and skills pools will usually be 9 (3ap), giving 225 to 405 xp. Might need to be adjusted.
+                char.add_exp(randint(25,45) * (stat_pool + skills_pool)) 
+                    
+                #) Improve stats of girl
+                while(stat_pool > 0):
+                    #randomly distribute stat_pool points among primary and secondary stats. 
+                    #Can be replaced with something more sophistocated if desired.
+                    if dice(50) and len(primary_stats) > 0: #make sure the stats list isn't empty
+                        char.mod_stat(choice(primary_stats), 1)
+                    elif len(secondary_stats) > 0:
+                        char.mod_stat(choice(secondary_stats), 1)
+                    else: 
+                        #the girl misses out, I guess. Might want to add a stat here?
+                        pass
+                    stat_pool -=1
+                
+                #) improve skills from class
+                while(skills_pool > 0):
+                    if dice(50) and len(primary_skills) > 0: #make sure the skills list isn't empty
+                        char.mod_skill(choice(primary_skills), 1)
+                    elif len(primary_skills) > 0:
+                        char.mod_skill(choice(secondary_skills), 1)
+                    else:
+                        pass
+                    skills_pool -=1
+                    
+                
+                
                 char.AP = 0
 
 
@@ -144,7 +196,17 @@ init python:
             self.img = renpy.displayable(img)
             self.courses = []
 
-        def add_cources(self):
+        @property
+        def is_school(self):
+            #added so that checks to building objects in character/screens works right
+            return True
+            
+        def remove_student(self, char):
+            #remove the student from all classes
+            for c in self.courses:
+                c.remove_student(char)
+            
+        def add_courses(self):
             forced = max(0, 12-len(self.courses))
             for i in range(forced):
                 self.create_course()
@@ -170,7 +232,9 @@ init python:
             course = SchoolCourse(id, difficulty, duration,
                                   days_to_complete, effectiveness,
                                   data)
+            course.building = self # ref so that each course knows what building it is in.
             self.courses.append(course)
+            
 
         def next_day(self):
             for c in self.courses[:]:
@@ -178,4 +242,4 @@ init python:
                 if c.days_remaining <= 0:
                     self.courses.remove(c)
 
-            self.add_courses()
+            self.add_courses() 

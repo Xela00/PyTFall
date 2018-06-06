@@ -1299,7 +1299,7 @@ init: # Screens:
                     hovered tt.Action("Give new name to your Building!")
                     text "Rename Building"
 
-            if isinstance(building, TrainingDungeon):
+            if False: #isinstance(building, TrainingDungeon):
                 button:
                     style_group "basic"
                     xysize (200, 32)

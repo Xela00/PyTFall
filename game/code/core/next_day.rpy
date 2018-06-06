@@ -176,9 +176,13 @@ label next_day_calculations:
     python:
         tl.start("Training")
         for school in schools:
-            school = schools[school]
+            #next_day method alerady defined in SchoolCourse class, just call that?
+            # Not sure if next_day for school is already called from the Building handling. Don't think so.
+            schools[school].next_day()
+            continue # I believe the logic after this is from the old School class.
+            # Therefore skipping it.
+            school = schools[school] # Not sure why you would do this. Iterator should already has the school name.
             if not school.available: continue
-
             girls = school.get_girls("Course")
             guards = school.get_girls("Guard")
             trainers = school.get_girls("Training")

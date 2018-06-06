@@ -36,18 +36,20 @@ screen set_action_dropdown(char, pos=()):
         anchor (xval, yval)
         has vbox
 
-        if getattr(char.location, "is_school", False):
-            textbutton "Change Course":
+        if getattr(char.workplace, "is_school", False): #char.workplace should have the building ref, to be consistent with elif below
+            textbutton "Change Course": #this should unenroll the student in current class
                 action [Hide("set_action_dropdown"),
                         Hide("charslist"),
                         Hide("char_profile"),
                         SetField(store, "char", char, True),
+                        Function(char.workplace.remove_student, char),
                         Jump("school_training")]
                 tooltip "Change training course to a different one."
-            textbutton "Stop Course":
+            textbutton "Stop Course": #this should also unenroll the student 
                 action [SetField(char, "location", None),
                         SetField(char, "workplace", None),
                         SetField(char, "action", None),
+                        Function(char.workplace.remove_student, char),
                         Hide("set_action_dropdown")]
                 tooltip "Call your girl back from the Academy to do something useful in one of your businesses."
         elif isinstance(char.workplace, UpgradableBuilding):
@@ -111,6 +113,7 @@ screen set_workplace_dropdown(char, pos=()):
         textbutton "None":
             selected char.workplace is None
             action [If(char_is_training(char), true=Function(stop_training, char)),
+                    If(char_is_student(char), true=Function(char_remove_student, char)), # could mash the is_student check into remove_student, but probably clearer this way
                     SetField(char, "workplace", None),
                     SetField(char, "action", None),
                     Hide("set_workplace_dropdown")]
