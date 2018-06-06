@@ -113,6 +113,7 @@ screen set_workplace_dropdown(char, pos=()):
         textbutton "None":
             selected char.workplace is None
             action [If(char_is_training(char), true=Function(stop_training, char)),
+                    If(char.workplace.is_student(char), true=Function(char.workplace.remove_student, char)), #setting workplace to None should unenroll student
                     SetField(char, "workplace", None),
                     SetField(char, "action", None),
                     Hide("set_workplace_dropdown")]
