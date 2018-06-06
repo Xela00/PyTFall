@@ -181,7 +181,7 @@ label start:
     $ schools = {}
     python hide: # Training/Schools/Weird Proxies by Thewlis:
         school = School() #updated for new School class 6/3/2018.
-        school.add_cources()
+        school.add_courses()
         schools[school.id] = school # new School class has id not name.
         # schools = load_schools()
         # pytFlagProxyStore = shallowcopy(pytFlagProxyStore)
@@ -293,6 +293,7 @@ label dev_testing_menu_and_load_mc:
             hero.say = Character(hero.nickname, color=ivory, show_two_window=True, show_side_image=hero.show("portrait", resize=(120, 120)))
             hero.restore_ap()
             hero.log_stats()
+            hero.gold = 999999999
 
             if DEBUG and not hero.home:
                 ap = buildings["Lux Apartment"]

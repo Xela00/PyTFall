@@ -92,8 +92,9 @@ init python:
             if student not in self.students_progress:
                 self.students_progress[student] = 0
 
-        def remove_student(self):
-            self.students.remove(student)
+        def remove_student(self, student):
+            if student in self.students:
+                self.students.remove(student)
 
         def next_day(self):
             self.days_remaining -= 1
@@ -199,6 +200,11 @@ init python:
         def is_school(self):
             #added so that checks to building objects in character/screens works right
             return True
+            
+        def remove_student(self, char):
+            #remove the student from all classes
+            for c in self.courses:
+                c.remove_student(char)
             
         def add_courses(self):
             forced = max(0, 12-len(self.courses))
