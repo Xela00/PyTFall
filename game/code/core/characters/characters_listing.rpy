@@ -1,35 +1,65 @@
 init:
-    default status_filters = set()
-    default location_filters = set()
-    default action_filters = set()
-    default class_filters = set()
+    default chars_list_state = None
     python:
         def sorting_for_chars_list():
             return [c for c in hero.chars if c.is_available]
 
-        def clear_selected_filters():
-            global selected_filters
-            selected_filters = set()
+        class CharsListState(_object):
+            def __init__(self):
+                self.source = CharsSortingForGui(sorting_for_chars_list)
+                self.source.sorting_order = "level"
+
+                self.status_filters = None
+                #self.location_filters = None
+                self.action_filters = None
+                self.class_filters = None
+                self.home_filters = None
+                self.work_filters = None
+
+                self.selected_filters = set()
+                self.the_chosen = set()
+
+            def update_filter_sets(self):
+                self.status_filters = set()
+                #self.location_filters = set()
+                self.action_filters = set()
+                self.class_filters = set()
+                self.home_filters = set()
+                self.work_filters = set()
+                for c in hero.chars:
+                    self.status_filters.add(c.status)
+                    #self.locations_filters.add(c.location)
+                    self.action_filters.add(c.action)
+                    self.home_filters.add(c.home)
+                    self.work_filters.add(c.workplace)
+                    for bt in c.traits.basetraits:
+                        self.class_filters.add(bt)
+
+            def reset_filters(self):
+               self.selected_filters = set()
+
+               self.source.clear()
+               self.source.filter()
+
+               renpy.restart_interaction()
+
+            def toggleChosenMembership(self, chars):
+                if self.the_chosen.issuperset(chars):
+                    self.the_chosen.difference_update(chars)
+                else:
+                    self.the_chosen.update(chars)
 
 label chars_list:
     scene bg gallery
-    # Check if we're the screen was loaded or not:
-    if not renpy.get_screen("chars_list"):
-        python:
-            char_lists_filters = CharsSortingForGui(sorting_for_chars_list)
-            char_lists_filters.sorting_order = "level"
-            char_lists_filters.filter()
+    python:
+        # lazy init the page state
+        if chars_list_state is None:
+            chars_list_state = CharsListState()
+        # always update/run the filters, because some girls might have become unavailable
+        chars_list_state.update_filter_sets()
+        chars_list_state.source.filter()
 
-            status_filters = set([c.status for c in hero.chars])
-            # location_filters = set([c.location for c in hero.chars])
-            home_filters = set([c.home for c in hero.chars])
-            work_filters = set([c.workplace for c in hero.chars])
-            action_filters = set([c.action for c in hero.chars])
-            class_filters = set([bt for c in hero.chars for bt in c.traits.basetraits])
-            selected_filters = set()
-            the_chosen = set()
-
-        show screen chars_list(source=char_lists_filters)
+    show screen chars_list()
     with dissolve
 
     python:
@@ -46,7 +76,6 @@ label chars_list:
                 elif result[1] == "home":
                     renpy.show_screen("set_home_dropdown", result[2], pos=renpy.get_mouse_pos())
                 elif result[1] == "action":
-                    the_chosen = set()
                     renpy.show_screen("set_action_dropdown", result[2], pos=renpy.get_mouse_pos())
             elif result[0] == 'choice':
                 renpy.hide_screen("chars_list")
@@ -56,34 +85,35 @@ label chars_list:
     hide screen chars_list
     jump mainscreen
 
-screen chars_list(source=None):
-    if not source.sorted:
-        text "You don't have any workers.":
-            size 40
-            color ivory
-            align .5, .2
-            style "TisaOTM"
-
+screen chars_list():
     key "mousedown_3" action Return(['control', 'return']) # keep in sync with button - alternate
+
+    $ CLS = chars_list_state
+    $ num_chars = len(CLS.source.sorted)
 
     # Normalize pages.
     default page_size = 10
     default page = chars_list_last_page_viewed
 
-    $ max_page = len(source.sorted)/page_size-1
-    if len(source.sorted) % page_size:
-        $ max_page += 1
+    $ max_page = 0 if num_chars == 0 else ((num_chars-1)/page_size)
     if page > max_page:
         $ page = max_page
-
-    python:
-        listed_chars = []
-        for start in xrange(0, len(source.sorted), page_size):
-             listed_chars.append(source.sorted[start:start+page_size])
+        $ chars_list_last_page_viewed = max_page
 
     # Chars:
-    if listed_chars:
-        $ charz_list = listed_chars[page]
+    if num_chars == 0:
+        text "You don't have any workers.":
+            size 40
+            color ivory
+            align .5, .2
+            style "TisaOTM"
+    else:
+        python:
+            #listed_chars = []
+            #for start in xrange(0, num_chars, page_size):
+            #    listed_chars.append(CLS.source.sorted[start:start+page_size])
+            #charz_list = listed_chars[page]
+            charz_list = CLS.source.sorted[page*page_size:page*page_size+page_size]
         hbox:
             style_group "content"
             spacing 14
@@ -99,7 +129,7 @@ screen chars_list(source=None):
                     hover_background Frame(Transform(img, alpha=.9), 10 ,10)
                     xysize (470, 115)
                     action Return(['choice', c])
-                    alternate Return(['control', 'return']) # keep in sync iwth mousedown_3
+                    alternate Return(['control', 'return']) # keep in sync with mousedown_3
                     tooltip "Show {}'s Profile!".format(c.name)
 
                     # Image:
@@ -219,8 +249,8 @@ screen chars_list(source=None):
                         style_group "basic"
                         xysize (25, 25)
                         align 1.0, 1.0 offset 9, -2
-                        action ToggleSetMembership(the_chosen, c)
-                        if c in the_chosen:
+                        action ToggleSetMembership(CLS.the_chosen, c)
+                        if c in CLS.the_chosen:
                             add(im.Scale('content/gfx/interface/icons/checkbox_checked.png', 25, 25)) align .5, .5
                         else:
                             add(im.Scale('content/gfx/interface/icons/checkbox_unchecked.png', 25, 25)) align .5, .5
@@ -255,14 +285,14 @@ screen chars_list(source=None):
                         style_prefix "basic"
                         xpadding 6
                         xsize 100
-                        action ToggleSetMembership(selected_filters, f)
+                        action ToggleSetMembership(CLS.selected_filters, f)
                         tooltip t
                         text f color c size 18 outlines [(1, "#3a3a3a", 0, 0)]
 
                 button:
                     style_group "basic"
                     xsize 100
-                    action source.clear, clear_selected_filters, renpy.restart_interaction
+                    action CLS.reset_filters
                     tooltip 'Reset all filters'
                     text "Reset"
 
@@ -274,37 +304,37 @@ screen chars_list(source=None):
                 xalign .5
                 cols 2
                 draggable True edgescroll (30, 100)
-                if "Status" in selected_filters:
-                    for f in status_filters:
+                if "Status" in CLS.selected_filters:
+                    for f in CLS.status_filters:
                         button:
                             xysize 125, 32
-                            action ModFilterSet(source, "status_filters", f)
+                            action ModFilterSet(CLS.source, "status_filters", f)
                             text f.capitalize() color green
                             tooltip 'Toggle the filter'
-                if "Home" in selected_filters:
-                    for f in home_filters:
+                if "Home" in CLS.selected_filters:
+                    for f in CLS.home_filters:
                         button:
                             xysize 125, 32
-                            action ModFilterSet(source, "home_filters", f)
+                            action ModFilterSet(CLS.source, "home_filters", f)
                             text "[f]" color saddlebrown:
                                 if len(str(f)) > 12:
                                     size 10
                             tooltip 'Toggle the filter'
-                if "Work" in selected_filters:
-                    for f in work_filters:
+                if "Work" in CLS.selected_filters:
+                    for f in CLS.work_filters:
                         button:
                             xysize 125, 32
-                            action ModFilterSet(source, "work_filters", f)
+                            action ModFilterSet(CLS.source, "work_filters", f)
                             text "[f]" color brown:
                                 if len(str(f)) > 12:
                                     size 10
                                     line_spacing -6
                             tooltip 'Toggle the filter'
-                if "Action" in selected_filters:
-                    for f in action_filters:
+                if "Action" in CLS.selected_filters:
+                    for f in CLS.action_filters:
                         button:
                             xysize 125, 32
-                            action ModFilterSet(source, "action_filters", f)
+                            action ModFilterSet(CLS.source, "action_filters", f)
                             $ t = str(f)
                             if t.lower().endswith(" job"):
                                 $ t = t[:-4]
@@ -313,11 +343,11 @@ screen chars_list(source=None):
                                     size 10
                                     line_spacing -6
                             tooltip 'Toggle the filter'
-                if "Class" in selected_filters:
-                    for f in class_filters:
+                if "Class" in CLS.selected_filters:
+                    for f in CLS.class_filters:
                         button:
                             xysize 125, 32
-                            action ModFilterSet(source, "class_filters", f)
+                            action ModFilterSet(CLS.source, "class_filters", f)
                             text "[f]" color purple
                             tooltip 'Toggle the filter'
 
@@ -329,26 +359,22 @@ screen chars_list(source=None):
             xysize (250, 50)
             style_prefix "basic"
             has hbox spacing 5 align .5, .5
-            $ chars_on_page = set(charz_list) if hero.chars else set()
             button: # select all on current listing, deselects them if all are selected
                 xysize (66, 40)
-                if the_chosen.issuperset(chars_on_page):
-                    action SetVariable("the_chosen", the_chosen.difference(chars_on_page))
-                else:
-                    action SetVariable("the_chosen", the_chosen.union(chars_on_page))
-                sensitive listed_chars
+                action Function(CLS.toggleChosenMembership, set(charz_list))
+                sensitive num_chars != 0
                 text "These"
                 tooltip 'Select all currently visible characters'
             button: # every of currently filtered, also in next tabs
                 xysize (66, 40)
-                action If(set(source.sorted).difference(the_chosen), [SetVariable("the_chosen", set(source.sorted))])
-                sensitive listed_chars
+                action Function(CLS.toggleChosenMembership, set(CLS.source.sorted))
+                sensitive num_chars != 0
                 text "All"
                 tooltip 'Select all characters'
             button: # deselect all
                 xysize (66, 40)
-                action SetVariable("the_chosen", set())
-                sensitive the_chosen
+                action Function(CLS.the_chosen.clear)
+                sensitive CLS.the_chosen
                 text "None"
                 tooltip "Clear Selection"
 
@@ -361,20 +387,23 @@ screen chars_list(source=None):
             has vbox align .5, .5 spacing 3
             button:
                 xysize (150, 40)
-                action If(len(the_chosen), [SetVariable("char", PytGroup(the_chosen)), Show("char_control")])
+                action [SetVariable("char", PytGroup(CLS.the_chosen)), Show("char_control")]
+                sensitive CLS.the_chosen
                 text "Controls"
                 selected False
                 tooltip 'Set desired behavior for group'
             button:
                 xysize (150, 40)
-                action If(len(the_chosen), [Hide("chars_list"), With(dissolve), SetVariable("eqtarget", None), Jump('char_equip')])
+                action [Hide("chars_list"), With(dissolve), SetVariable("eqtarget", None), Jump('char_equip')]
+                sensitive CLS.the_chosen
                 text "Equipment"
                 selected False
                 tooltip "Manage Group's Equipment"
             button:
                 xysize (150, 40)
-                action If(len(the_chosen), [Hide("chars_list"), With(dissolve),
-                          Jump('school_training')])
+                action [Hide("chars_list"), With(dissolve),
+                          Jump('school_training')]
+                sensitive CLS.the_chosen
                 text "Training"
                 selected False
                 tooltip "Send the entire group to School!"
@@ -403,6 +432,3 @@ screen chars_list(source=None):
             keysym "mousedown_5"
 
     $ store.chars_list_last_page_viewed = page # At Darks Request!
-    # Normalize stored page, should we done 'on hide' but we can't trust those atm.
-    if chars_list_last_page_viewed > max_page:
-        $ chars_list_last_page_viewed = max_page
