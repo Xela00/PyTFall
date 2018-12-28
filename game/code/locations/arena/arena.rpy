@@ -653,7 +653,7 @@ init -9 python:
             self.ladder = candidates[:len(self.ladder)]
 
         def load_special_team_presets(self):
-            json_fighters = store.json_fighters
+            female_fighters = store.female_fighters
             teams = json.load(renpy.file("content/db/arena_teams.json"))
             for team in teams:
                 members = team["members"]
@@ -688,8 +688,8 @@ init -9 python:
                                             " to 2v2 Arena teams twice!" % chars[member].name)
                         if member in self.get_teams_fighters(teams="3v3"):
                             raise Exception("You've added unique character %s to 3v3 Arena teams more than once!" % chars[member].name)
-                    elif member in json_fighters:
-                        member = json_fighters[member]
+                    elif member in female_fighters:
+                        member = female_fighters[member]
                         if member in self.get_teams_fighters(teams="2v2"):
                             raise Exception("You've added an unique Arena" \
                                             " Fighter %s to 2v2 Arena teams twice!" % member.name)

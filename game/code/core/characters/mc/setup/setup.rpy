@@ -1,6 +1,6 @@
 label mc_setup:
     $ persistent.intro = True
-    $ male_fighters, female_fighters, json_fighters = load_special_arena_fighters()
+    $ male_fighters, female_fighters = load_special_arena_fighters()
 
     # call build_mc_stories from _call_build_mc_stories
 
