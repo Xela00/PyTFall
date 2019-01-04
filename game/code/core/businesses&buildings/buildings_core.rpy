@@ -409,7 +409,7 @@ init -10 python:
 
             dirt_string = ""
             for key in self.DIRT_STATES:
-                if dirt >= self.DIRT_STATES[key][0] and dirt <= self.DIRT_STATES[key][1]:
+                if self.DIRT_STATES[key][0] <= dirt <= self.DIRT_STATES[key][1]:
                     dirt_string = key
 
             if not dirt_string:

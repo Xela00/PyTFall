@@ -59,12 +59,12 @@ label mc_setup_warrior_defender_guard:
         ba = None #the cheapest building
         ap = None
         for b in buildings.values():
-            if ba == None:
+            if ba is None:
                 ba = b
             elif ba.price > b.price:
                 ap = ba
                 ba = b
-            elif ap == None or ap.price > b.price:
+            elif ap is None or ap.price > b.price:
                 ap = b
         if not ap:
             ap = ba   

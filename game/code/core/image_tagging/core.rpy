@@ -167,7 +167,7 @@ init -9 python:
             the game directory and will contain the complete database contents.
             '''
             # ensure that all target files have valid paths
-            if targetfiles==[]:
+            if not targetfiles:
                 targets = {os.path.join(gamedir, "tags.json") : {}}
             else:
                 targets = {}

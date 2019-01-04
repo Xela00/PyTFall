@@ -130,7 +130,7 @@ label test_be_logical:
             hero.team.add(n)
         n.AP = 6
         # ImageReference("chainfights")
-        battle = BE_Core(logical=1)
+        battle = BE_Core(logical=True)
         battle.teams.append(hero.team)
         battle.teams.append(enemy_team)
 

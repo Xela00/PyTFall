@@ -250,7 +250,7 @@ label dev_testing_menu_and_load_mc:
             if DEBUG and not hero.home:
                 ap = None 
                 for b in buildings.values():
-                    if ap == None or b.price > ap.price:
+                    if ap is None or b.price > ap.price:
                         ap = b
                 if ap:
                     hero.buildings.append(ap)

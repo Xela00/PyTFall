@@ -678,7 +678,7 @@ init -9 python:
             """
             if not name:
                 name = "Work"
-            self.add(index, WorldAction(name, Return(["control", returned]), condition=condition, null_button="Work", null_condition=Iff(S((hero, "AP")), "==", 0)))
+            self.add(index, WorldAction(name, Return(["control", returned]), condition=condition, null_button="Work", null_condition=Iff(S((hero, "AP")), "==", False)))
 
 
     class WorldAction(_object):

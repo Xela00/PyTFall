@@ -1038,7 +1038,7 @@ init -10 python:
             for log in [self.game_main_income_log, self.game_main_expense_log,
                         self.game_logical_income_log, self.game_logical_expense_log]:
                 for day, info in log.items():
-                    if day > 0 and day < cut_off_day:
+                    if 0 < day < cut_off_day:
                         log[-1] = add_dicts([log.get(-1, {}), info])
                         del log[day]
 

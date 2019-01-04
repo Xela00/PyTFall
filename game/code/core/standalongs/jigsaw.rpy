@@ -35,7 +35,7 @@ init python:
 
             for i in range(0, grid_width):
                 for j in range(0, grid_height):
-                    if placedlist[i,j] == False:
+                    if not placedlist[i, j]:
                         return
             return True
         return

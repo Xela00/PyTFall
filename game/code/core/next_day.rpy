@@ -26,7 +26,7 @@ init python:
 
             for char in container:
                 cat = 0
-                if char.action == None:
+                if char.action is None:
                     cat = "IDLE"
                     a["IDLE"] += 1
                 elif hasattr(char.action, "type"):

@@ -322,10 +322,10 @@ init -6 python: # Guild, Tracker and Log.
             self.teams = list() # List to hold all the teams formed in this guild. We should add at least one team or the guild will be useless...
             self.explorers = list() # List to hold all the (active) exploring trackers.
 
-            self.teams.append(Team("Avengers", free=1))
+            self.teams.append(Team("Avengers", free=True))
             if DEBUG_SE:
                 for i in range(5):
-                    self.teams.append(Team("Team " + str(i), free=1))
+                    self.teams.append(Team("Team " + str(i), free=True))
 
             self.workable = True
             self.focus_team = None
@@ -922,7 +922,7 @@ init -6 python: # Guild, Tracker and Log.
                 i.controller = BE_AI(i)
 
             # Logical battle scenario:
-            battle = BE_Core(logical=1)
+            battle = BE_Core(logical=True)
             store.battle = battle # Making battle global... I need to make sure this is not needed.
             battle.teams.append(team)
             battle.teams.append(opfor)
