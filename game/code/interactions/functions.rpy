@@ -322,7 +322,7 @@ init -11 python:
         elif character.vitality <= 40:
             character.override_portrait("portrait", "indifferent")
             character.say("She looks very tired...")
-            character.restore_portrait
+            character.restore_portrait()
             return True
         elif character.health < (round(character.get_max("health")*.2)):
             character.override_portrait("portrait", "indifferent")
@@ -332,7 +332,7 @@ init -11 python:
         elif "Down with Cold" in character.effects:
             character.override_portrait("portrait", "indifferent")
             character.say("She looks a bit pale...")
-            character.restore_portrait
+            character.restore_portrait()
             return False
         elif character.joy <= 25:
             character.override_portrait("portrait", "sad")

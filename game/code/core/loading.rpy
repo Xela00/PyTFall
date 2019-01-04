@@ -438,7 +438,7 @@ init -11 python:
             fighter.id = id
             if gender == "female":
                 fighter.name = get_first_name()
-                fighter.gender == "female"
+                fighter.gender = "female"
                 fighter.fullname = " ".join([fighter.name, get_last_name()])
                 fighter.nickname = fighter.name
                 female_fighters[id] = fighter

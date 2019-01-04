@@ -1029,5 +1029,5 @@ init -6 python: # Guild, Tracker and Log.
             team = tracker.team
             AP = 0
             for m in team:
-                AP + m.AP
+                AP += m.AP
             tracker.points = AP * 100
