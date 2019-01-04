@@ -181,11 +181,11 @@ init -9 python:
                     self.worker.del_flag("sentence_type")
                     self.worker.del_flag("days_in_jail")
                     if direction == "STinTD":
-                        self.remove_prisoner()
+                        self.remove_prisoner(self.worker)
                     elif direction == "Blue":
                         if hero.take_money(2000, reason="Blue's Fees"):
                             pytfall.sm.blue_girls[self.worker] = 0
-                            self.remove_prisoner(set_location=False)
+                            self.remove_prisoner(self.worker, set_location=False)
                         else:
                             hero.add_money(self.get_fees4captured(), reason="Jail Fees")
                             renpy.call_screen('message_screen', "You don't have enough money for upfront payment for Blue's services!")
