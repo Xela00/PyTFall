@@ -100,16 +100,13 @@ label start:
         dungeons = load_dungeons()
         tl.end("Loading: Dungeons")
 
-    # Battle Skills:
-    $ tl.start("Loading: Battle Skills")
-    $ battle_skills = dict()
-    call load_battle_skills from _call_load_battle_skills
-    $ tiered_magic_skills = dict()
-    python:
+        # Battle Skills:
+        tl.start("Loading: Battle Skills")
+        battle_skills = load_battle_skills()
+        tiered_magic_skills = dict()
         for s in battle_skills.values():
             tiered_magic_skills.setdefault(s.tier, []).append(s)
-
-    $ tl.end("Loading: Battle Skills")
+        tl.end("Loading: Battle Skills")
 
     $ hero = Player()
 
@@ -250,7 +247,7 @@ label dev_testing_menu_and_load_mc:
             if DEBUG and not hero.home:
                 ap = None 
                 for b in buildings.values():
-                    if ap == None or b.price > ap.price:
+                    if ap is None or b.price > ap.price:
                         ap = b
                 if ap:
                     hero.buildings.append(ap)
@@ -525,6 +522,62 @@ label after_load:
     #         if c not in chars.itervalues():
     #             remove_from_gameworld(c)
     python hide:
+        pytfall.maps = OnScreenMap()
+
+        for s in store.battle_skills.values():
+            if "initial_pause" not in s.target_damage_effect.keys():
+                s.target_damage_effect["initial_pause"] = s.main_effect["duration"] * .75
+            gfx = s.attacker_effects["gfx"]
+            if isinstance(gfx, basestring):
+                if gfx == "orb":
+                    s.attacker_effects["gfx"] = "cast_orb_1"
+                    s.attacker_effects["zoom"] = 1.85
+                    s.attacker_effects["duration"] = 0.84
+                elif gfx == "wolf":
+                    s.attacker_effects["gfx"] = "wolf_1_webm"
+                    s.attacker_effects["zoom"] = .85
+                    s.attacker_effects["duration"] = 1.27
+                    s.attacker_effects["cast"] = { "align": (.0, .5) }
+                elif gfx == "bear":
+                    s.attacker_effects["gfx"] = "bear_1_webm"
+                    s.attacker_effects["zoom"] = .85
+                    s.attacker_effects["duration"] = 0.97
+                    s.attacker_effects["cast"] = { "align": (.0, .5) }
+                elif gfx in ["dark_1", "light_1", "water_1", "air_1", "fire_1", "earth_1", "electricity_1", "ice_1"]:
+                    s.attacker_effects["gfx"] = "cast_" + gfx
+                    s.attacker_effects["zoom"] = 1.5
+                    s.attacker_effects["duration"] = 0.84
+                    s.attacker_effects["cast"] = { "point": "bc", "yo": -75}
+                elif gfx in ["dark_2", "light_2", "water_2", "air_2", "fire_2", "earth_2", "ice_2", "electricity_2"]:
+                    s.attacker_effects["gfx"] = "cast_" + gfx
+                    s.attacker_effects["zoom"] = .9
+                    s.attacker_effects["duration"] = 1.4
+                elif gfx == "default_1":
+                    s.attacker_effects["gfx"] = "cast_" + gfx
+                    s.attacker_effects["zoom"] = 1.6
+                    s.attacker_effects["duration"] = 1.12
+                    s.attacker_effects["cast"] = { "ontop": False, "point": "bc" }
+                elif gfx == "circle_1":
+                    s.attacker_effects["gfx"] = "cast_" + gfx
+                    s.attacker_effects["zoom"] = 1.9
+                    s.attacker_effects["duration"] = 1.05
+                    s.attacker_effects["cast"] = { "ontop": False, "point": "bc", "yo": -10 }
+                elif gfx == "circle_2":
+                    s.attacker_effects["gfx"] = "cast_" + gfx
+                    s.attacker_effects["zoom"] = 1.8
+                    s.attacker_effects["duration"] = 1.1
+                    s.attacker_effects["cast"] = { "point": "bc", "yo": -100 }
+                elif gfx == "circle_3":
+                    s.attacker_effects["gfx"] = "cast_" + gfx
+                    s.attacker_effects["zoom"] = 1.8
+                    s.attacker_effects["duration"] = 0.96
+                    s.attacker_effects["cast"] = { "yo": -50 }
+                elif gfx == "runes_1":
+                    s.attacker_effects["gfx"] = "cast_" + gfx
+                    s.attacker_effects["zoom"] = 1.1
+                    s.attacker_effects["duration"] = 0.75
+                    s.attacker_effects["cast"] = { "ontop": False, "point": "bc", "yo": -50}
+
         tierless_items = store.tiered_items.get(None)
         if tierless_items:
             for item in tierless_items:
@@ -536,6 +589,26 @@ label after_load:
             pytfall.arena.df_count = 0
             pytfall.arena.hero_match_result = None 
 
+        if hasattr(hero, "STATS"):
+            for c in itertools.chain(chars.values(), [hero], hero.chars, npcs.values()):
+                if hasattr(c, "STATS"):
+                    del c.STATS
+                if hasattr(c, "SKILLS"):
+                    del c.SKILLS
+                if hasattr(c, "FULLSKILLS"):
+                    del c.FULLSKILLS
+                if hasattr(c, "GEN_OCCS"):
+                    del c.GEN_OCCS
+                if hasattr(c, "STATUS"):
+                    del c.STATUS
+                if hasattr(c, "MOOD_TAGS"):
+                    del c.MOOD_TAGS
+                if hasattr(c, "UNIQUE_SAY_SCREEN_PORTRAIT_OVERLAYS"):
+                    del c.UNIQUE_SAY_SCREEN_PORTRAIT_OVERLAYS
+
+        if hero.controller == "player":
+            hero.controller = None
+            clearControllers = True
         if not hasattr(hero, "teams"):
             hero.teams = [hero.team]
 
@@ -557,6 +630,39 @@ label after_load:
                     val = 90 if b.auto_clean else 100
                     del b.auto_clean
                     b.auto_clean = val 
+
+        if "clearControllers" in locals():
+            for girl in itertools.chain(chars.values(), hero.chars, npcs.values()):
+                if girl.controller == "player":
+                    girl.controller = None
+
+            #for girl in itertools.chain(jail.chars_list, pytfall.ra.girls.keys()):
+            #    if girl.controller == "player":
+            #        girl.controller = None
+
+            arena = pytfall.arena
+            for fighter in itertools.chain(arena.ladder, arena.arena_fighters.values()):
+                if fighter.controller == "player":
+                    fighter.controller = None
+
+            for team in itertools.chain(arena.teams_2v2, arena.teams_3v3,\
+                 arena.dogfights_1v1, arena.dogfights_2v2, arena.dogfights_3v3,\
+                 arena.lineup_1v1, arena.lineup_2v2, arena.lineup_3v3):
+
+                    for fighter in team:
+                        if fighter.controller == "player":
+                            fighter.controller = None
+
+            for setup in itertools.chain(arena.matches_1v1, arena.matches_2v2, arena.matches_3v3):
+                for fighter in itertools.chain(setup[0].members, setup[1].members):
+                    if fighter.controller == "player":
+                        fighter.controller = None
+
+            for b in hero.buildings:
+                if isinstance(b, UpgradableBuilding):
+                    for client in b.all_clients:
+                        if client.controller == "player":
+                            client.controller = None
 
     python hide:
         if hasattr(store, "json_fighters"):
